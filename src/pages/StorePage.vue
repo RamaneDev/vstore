@@ -11,20 +11,22 @@
 
         <h5 class="text-warning ml-3">Brands</h5>
         <ul class="list-group my-3">
-          <li class="list-group-item active">Cras justo odio</li>
-          <li class="list-group-item">Dapibus ac facilisis in</li>
-          <li class="list-group-item">Morbi leo risus</li>
-          <li class="list-group-item">Porta ac consectetur ac</li>
-          <li class="list-group-item">Vestibulum at eros</li>
+        <li :class="{ 'list-group-item': true, active: selectedBrandid === brand.id}"
+             v-for="brand in [{id:0, name:'All'}, ...brands]" :key="brand.id"
+             @click="setBrandid(brand.id)"
+             >
+             {{brand.name}}
+          </li>
         </ul>
 
         <h5 class="text-warning ml-3">Types</h5>
         <ul class="list-group my-3">
-          <li class="list-group-item active">Cras justo odio</li>
-          <li class="list-group-item">Dapibus ac facilisis in</li>
-          <li class="list-group-item">Morbi leo risus</li>
-          <li class="list-group-item">Porta ac consectetur ac</li>
-          <li class="list-group-item">Vestibulum at eros</li>
+        <li :class="{ 'list-group-item': true, active: selectedTypeid === type.id}"
+            v-for="type in [{id:0, name:'All'}, ...types]" :key="type.id"
+            @click="setTypeid(type.id)"
+        >
+             {{type.name}}
+          </li>
         </ul>
     </section>
       <section class="col-9">
@@ -40,7 +42,7 @@
           </div>
 
           <div class="row">
-          <div class="col-md-4" v-for="product in products" :key="product.id">
+          <div class="col-md-4" v-for="product in products" :key="product.id" >
                  <ProductItem :product="product" />
            </div>
          </div>
@@ -51,14 +53,30 @@
 
 <script setup lang="ts">
 import ProductItem from '@/components/ProductItem.vue';
-import { IProduct } from '@/models/Product';
 import { onMounted, ref } from 'vue';
 import { useProductList } from '@/composables/useProductList';
+import useBrands from '@/composables/useBrands';
+import useProductTypes from '@/composables/useProductTypes';
 
 const { products, isLoading, error, fetchProducts } = useProductList();
+const {brands, fetchBrands} = useBrands();
+const {types, fetchTypes } = useProductTypes();
+
+const selectedBrandid = ref(0);
+const selectedTypeid = ref(0);
+
+const setBrandid = (value: number) => {
+  selectedBrandid.value = value;
+}
+
+const setTypeid = (value: number) => {
+  selectedTypeid.value = value;
+}
 
 onMounted(() => {
   fetchProducts();
+  fetchBrands();
+  fetchTypes();
 
 });
 
